@@ -5,10 +5,13 @@ const uint8_t RFM9X_WRITE = 0x80;
 
 const uint8_t RFM9X_REG_FIFO = 0x00;
 const uint8_t RFM9X_REG_MODE = 0x01;
+const uint8_t RFM9X_REG_BITRATE_MSB = 0x02;
+const uint8_t RFM9X_REG_BITRATE_LSB = 0x03;
 const uint8_t RFM9X_REG_FREQUENCY = 0x06;
 const uint8_t RFM9X_REG_SYNC_CONFIG = 0x27;
-const uint8_t RFM9X_REG_VERSION = 0x42;
 const uint8_t RFM9X_REG_IRQ_FLAGS = 0x3e;
+const uint8_t RFM9X_REG_VERSION = 0x42;
+const uint8_t RFM9X_REG_BITRATE_FRAC = 0x5d; // bits 0-3; 4-7 are reserved
 
 void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback) {
   uint8_t com = RFM9X_READ | RFM9X_REG_FIFO;
@@ -27,6 +30,38 @@ void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback) {
   rfm9x->set_spi_nss_pin();
 
   callback(data, length);
+}
+
+void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate) {
+  uint8_t com = RFM9X_WRITE | RFM9X_REG_BITRATE_MSB;
+  uint16_t tmp = 32000000 / *bitrate;
+  // uint8_t spi_tmp = tmp >> 8;
+  uint8_t spi_tmp = 1;
+
+  rfm9x->reset_spi_nss_pin();
+  rfm9x->spi_transfer(&com);
+  rfm9x->spi_transfer(&spi_tmp);
+  spi_tmp = tmp;
+  rfm9x->spi_transfer(&spi_tmp);
+  rfm9x->set_spi_nss_pin();
+}
+
+/*
+ * Bitrate (b/s) = FXOSC (32 MHz) / (Bitrate + BitrateFrac / 16)
+ * e.g. 0x1A0B = 4.8 kb/s
+*/
+void RFM9X_GetBitrate(const rfm9x_t* const rfm9x, uint32_t* const bitrate) {
+  uint8_t com = RFM9X_READ | RFM9X_REG_BITRATE_MSB;
+  uint8_t tmp;
+
+  rfm9x->reset_spi_nss_pin();
+  rfm9x->spi_transfer(&com);
+  rfm9x->spi_transfer(&tmp);
+  *bitrate = tmp << 8;
+  rfm9x->spi_transfer(&tmp);
+  rfm9x->set_spi_nss_pin();
+  *bitrate += tmp;
+  *bitrate = 32000000 / *bitrate;
 }
 
 void RFM9X_GetVersion(const rfm9x_t* const rfm9x, uint8_t* const version) {

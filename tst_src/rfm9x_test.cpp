@@ -2,6 +2,7 @@
 
 static vector<string> resp;
 static rfm9x_t rfm9x;
+static vector<uint8_t> spi_resp;
 
 TEST(Rfm9xTest, Init) {
   Test_Setup();
@@ -38,9 +39,42 @@ TEST(Rfm9xTest, GetVersion) {
   ASSERT_EQ(version, 0xAA);
 }
 
+TEST(Rfm9xTest, GetBitrate) {
+  Test_Setup();
+  spi_resp.push_back(0x00);
+  spi_resp.push_back(0x1a);
+  spi_resp.push_back(0x0b);
+
+  uint32_t bitrate = 0;
+  RFM9X_GetBitrate(&rfm9x, &bitrate);
+
+  ASSERT_EQ(resp.size(), 5);
+  ASSERT_EQ(resp[0], "reset spi nss pin");
+  ASSERT_EQ(resp[1], "spi transfer: 2");
+  ASSERT_EQ(resp[2], "spi transfer: 0");
+  ASSERT_EQ(resp[3], "spi transfer: 26");
+  ASSERT_EQ(resp[4], "set spi nss pin");
+  ASSERT_EQ(bitrate, 4799);
+}
+
+TEST(Rfm9xTest, SetBitrate) {
+  Test_Setup();
+
+  uint32_t bitrate = 100000;
+  RFM9X_SetBitrate(&rfm9x, &bitrate);
+
+  ASSERT_EQ(resp.size(), 5);
+  ASSERT_EQ(resp[0], "reset spi nss pin");
+  ASSERT_EQ(resp[1], "spi transfer: 130");
+  ASSERT_EQ(resp[2], "spi transfer: 1");
+  ASSERT_EQ(resp[3], "spi transfer: 64");
+  ASSERT_EQ(resp[4], "set spi nss pin");
+}
+
 void Test_Setup() {
   resp.resize(0);
-  
+  spi_resp.resize(0);
+
   rfm9x = {
     &Rfm9xSetResetPin,
     &Rfm9xResetResetPin,
@@ -82,9 +116,16 @@ void Rfm9xResetSpiNssPin() {
 void Rfm9xSpiTransfer(uint8_t* const data) {
   ostringstream os;
 
-  os << "spi transfer: " << (int)*data;
+  os << "spi transfer: " << (unsigned int)*data;
 
-  *data = 0xAA;
+  uint8_t tmp = 0xAA;
+
+  if (spi_resp.size() > 0) {
+    tmp = spi_resp.front();
+    spi_resp.erase(spi_resp.begin());
+  }
+
+  *data = tmp;
   resp.push_back(os.str());
 }
 

@@ -49,5 +49,7 @@ void RFM9X_SetSyncWord(const rfm9x_t* const rfm9x, const uint8_t* const syncWord
 void RFM9X_GetMode(const rfm9x_t* const rfm9x, rfm9x_mode_t* const mode);
 void RFM9X_SetMode(const rfm9x_t* const rfm9x, const rfm9x_mode_t* const mode);
 void RFM9X_GetFlags(const rfm9x_t* const rfm9x, uint16_t* const flags);
+void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate);
+void RFM9X_GetBitrate(const rfm9x_t* const rfm9x, uint32_t* const bitrate);
 void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback);
 #endif
