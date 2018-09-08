@@ -82,7 +82,7 @@ void RFM9X_GetSyncWord(const rfm9x_t* const rfm9x, uint8_t syncWord[8], uint8_t*
   *length = (syncConfig & 0b00000111) + 1;
 }
 
-void RFM98_SetSyncWord(const rfm9x_t* const rfm9x, const uint8_t* const syncWord, uint8_t length) {
+void RFM9X_SetSyncWord(const rfm9x_t* const rfm9x, const uint8_t* const syncWord, uint8_t length) {
   uint8_t com = RFM9X_READ | RFM9X_REG_SYNC_CONFIG;
   uint8_t syncConfig;
 
@@ -107,7 +107,7 @@ void RFM98_SetSyncWord(const rfm9x_t* const rfm9x, const uint8_t* const syncWord
   rfm9x->set_spi_nss_pin();
 }
 
-void RFM98_GetMode(const rfm9x_t* const rfm9x, rfm9x_mode_t* const mode) {
+void RFM9X_GetMode(const rfm9x_t* const rfm9x, rfm9x_mode_t* const mode) {
   uint8_t com = RFM9X_READ | RFM9X_REG_MODE;
 
   rfm9x->reset_spi_nss_pin();
@@ -118,7 +118,7 @@ void RFM98_GetMode(const rfm9x_t* const rfm9x, rfm9x_mode_t* const mode) {
   *mode = (rfm9x_mode_t)(*mode & 0b00000111);
 }
 
-void RFM98_SetMode(const rfm9x_t* const rfm9x, const rfm9x_mode_t* const mode) {
+void RFM9X_SetMode(const rfm9x_t* const rfm9x, const rfm9x_mode_t* const mode) {
   uint8_t com = RFM9X_READ | RFM9X_REG_MODE;
   uint8_t oldMode = 0;
 
