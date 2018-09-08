@@ -35,8 +35,7 @@ void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback) {
 void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate) {
   uint8_t com = RFM9X_WRITE | RFM9X_REG_BITRATE_MSB;
   uint16_t tmp = 32000000 / *bitrate;
-  // uint8_t spi_tmp = tmp >> 8;
-  uint8_t spi_tmp = 1;
+  uint8_t spi_tmp = tmp >> 8;
 
   rfm9x->reset_spi_nss_pin();
   rfm9x->spi_transfer(&com);
