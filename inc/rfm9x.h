@@ -39,6 +39,10 @@ typedef enum {
   RFM9X_FLAG_CRC_OK = 0x0002,
   RFM9X_FLAG_LOW_BAT = 0x0001
 } rfm9x_flags_t;
+typedef enum {
+  RFM9X_CRC_AUTOCLEAR_ON = 0xF7,
+  RFM9X_CRC_AUTOCLEAR_OFF = 0x08
+} rfm9x_crc_autoclear_mode_t;
 
 void RFM9X_Init(const rfm9x_t* const rfm9x);
 void RFM9X_Reset(const rfm9x_t* const rfm9x);
@@ -52,4 +56,5 @@ void RFM9X_GetFlags(const rfm9x_t* const rfm9x, uint16_t* const flags);
 void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate);
 void RFM9X_GetBitrate(const rfm9x_t* const rfm9x, uint32_t* const bitrate);
 void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback);
+void RFM9X_SetCrcAutoClearMode(const rfm9x_t* const rfm9x, const rfm9x_crc_autoclear_mode_t* const mode);
 #endif

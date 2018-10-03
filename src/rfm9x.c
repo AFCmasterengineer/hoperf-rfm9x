@@ -9,6 +9,7 @@ const uint8_t RFM9X_REG_BITRATE_MSB = 0x02;
 const uint8_t RFM9X_REG_BITRATE_LSB = 0x03;
 const uint8_t RFM9X_REG_FREQUENCY = 0x06;
 const uint8_t RFM9X_REG_SYNC_CONFIG = 0x27;
+const uint8_t RFM9X_REG_PACKET_CONFIG_1 = 0x30;
 const uint8_t RFM9X_REG_IRQ_FLAGS = 0x3e;
 const uint8_t RFM9X_REG_VERSION = 0x42;
 const uint8_t RFM9X_REG_BITRATE_FRAC = 0x5d; // bits 0-3; 4-7 are reserved
@@ -182,5 +183,27 @@ void RFM9X_GetFlags(const rfm9x_t* const rfm9x, uint16_t* const flags) {
   *flags += flagByte << 8;
   rfm9x->spi_transfer(&flagByte);
   *flags += flagByte;
+  rfm9x->set_spi_nss_pin();
+}
+
+void RFM9X_SetCrcAutoClearMode(const rfm9x_t* const rfm9x, const rfm9x_crc_autoclear_mode_t* const mode) {
+  uint8_t com = RFM9X_READ | RFM9X_REG_PACKET_CONFIG_1;
+  uint8_t oldMode = 0;
+
+  rfm9x->reset_spi_nss_pin();
+  rfm9x->spi_transfer(&com);
+  rfm9x->spi_transfer(&oldMode);
+  rfm9x->set_spi_nss_pin();
+
+  if (*mode == RFM9X_CRC_AUTOCLEAR_OFF) {
+    oldMode |= RFM9X_CRC_AUTOCLEAR_OFF;
+  } else {
+    oldMode &= RFM9X_CRC_AUTOCLEAR_ON;
+  }
+  com = RFM9X_WRITE | RFM9X_REG_PACKET_CONFIG_1;
+
+  rfm9x->reset_spi_nss_pin();
+  rfm9x->spi_transfer(&com);
+  rfm9x->spi_transfer(&oldMode);
   rfm9x->set_spi_nss_pin();
 }
