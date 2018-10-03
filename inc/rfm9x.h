@@ -43,6 +43,10 @@ typedef enum {
   RFM9X_CRC_AUTOCLEAR_ON = 0xF7,
   RFM9X_CRC_AUTOCLEAR_OFF = 0x08
 } rfm9x_crc_autoclear_mode_t;
+typedef enum {
+  RFM9X_FREQ_DEV_5KHZ = 0x0052,
+  RFM9X_FREQ_DEV_50KHZ = 0x0334
+} rfm9x_freq_dev_t;
 
 void RFM9X_Init(const rfm9x_t* const rfm9x);
 void RFM9X_Reset(const rfm9x_t* const rfm9x);
@@ -57,4 +61,5 @@ void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate)
 void RFM9X_GetBitrate(const rfm9x_t* const rfm9x, uint32_t* const bitrate);
 void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback);
 void RFM9X_SetCrcAutoClearMode(const rfm9x_t* const rfm9x, const rfm9x_crc_autoclear_mode_t* const mode);
+void RFM9X_SetFreqDev(const rfm9x_t* const rfm9x, const rfm9x_freq_dev_t* const freqDev);
 #endif

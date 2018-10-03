@@ -7,6 +7,8 @@ const uint8_t RFM9X_REG_FIFO = 0x00;
 const uint8_t RFM9X_REG_MODE = 0x01;
 const uint8_t RFM9X_REG_BITRATE_MSB = 0x02;
 const uint8_t RFM9X_REG_BITRATE_LSB = 0x03;
+const uint8_t RFM9X_REG_FDEV_MSB = 0x04;
+const uint8_t RFM9X_REG_FDEV_LSB = 0x05;
 const uint8_t RFM9X_REG_FREQUENCY = 0x06;
 const uint8_t RFM9X_REG_SYNC_CONFIG = 0x27;
 const uint8_t RFM9X_REG_PACKET_CONFIG_1 = 0x30;
@@ -205,5 +207,18 @@ void RFM9X_SetCrcAutoClearMode(const rfm9x_t* const rfm9x, const rfm9x_crc_autoc
   rfm9x->reset_spi_nss_pin();
   rfm9x->spi_transfer(&com);
   rfm9x->spi_transfer(&oldMode);
+  rfm9x->set_spi_nss_pin();
+}
+
+void RFM9X_SetFreqDev(const rfm9x_t* const rfm9x, const rfm9x_freq_dev_t* const freqDev) {
+  uint8_t com = RFM9X_WRITE | RFM9X_REG_FDEV_MSB;
+  uint16_t tmp = (uint16_t)(*freqDev) & 0x3FFF;
+  uint8_t spi_tmp = tmp >> 8;
+
+  rfm9x->reset_spi_nss_pin();
+  rfm9x->spi_transfer(&com);
+  rfm9x->spi_transfer(&spi_tmp);
+  spi_tmp = tmp;
+  rfm9x->spi_transfer(&spi_tmp);
   rfm9x->set_spi_nss_pin();
 }
