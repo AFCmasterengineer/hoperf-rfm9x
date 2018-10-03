@@ -71,6 +71,37 @@ TEST(Rfm9xTest, SetBitrate) {
   ASSERT_EQ(resp[4], "set spi nss pin");
 }
 
+TEST(Rfm9xTest, GetPowerConfig) {
+  Test_Setup();
+  spi_resp.push_back(0x00);
+  spi_resp.push_back(0x8a);
+
+  uint8_t outputPower;
+
+  RFM9X_GetPower(&rfm9x, &outputPower);
+
+  ASSERT_EQ(resp.size(), 4);
+  ASSERT_EQ(resp[0], "reset spi nss pin");
+  ASSERT_EQ(resp[1], "spi transfer: 9");
+  ASSERT_EQ(resp[2], "spi transfer: 0");
+  ASSERT_EQ(resp[3], "set spi nss pin");
+  ASSERT_EQ(outputPower, 12);
+}
+
+TEST(Rfm9xTest, SetPowerConfig) {
+  Test_Setup();
+
+  uint8_t outputPower = 4;
+
+  RFM9X_SetPower(&rfm9x, &outputPower);
+
+  ASSERT_EQ(resp.size(), 4);
+  ASSERT_EQ(resp[0], "reset spi nss pin");
+  ASSERT_EQ(resp[1], "spi transfer: 137");
+  ASSERT_EQ(resp[2], "spi transfer: 130");
+  ASSERT_EQ(resp[3], "set spi nss pin");
+}
+
 void Test_Setup() {
   resp.resize(0);
   spi_resp.resize(0);

@@ -10,6 +10,7 @@ const uint8_t RFM9X_REG_BITRATE_LSB = 0x03;
 const uint8_t RFM9X_REG_FDEV_MSB = 0x04;
 const uint8_t RFM9X_REG_FDEV_LSB = 0x05;
 const uint8_t RFM9X_REG_FREQUENCY = 0x06;
+const uint8_t RFM9X_REG_PA_CONFIG = 0x09;
 const uint8_t RFM9X_REG_SYNC_CONFIG = 0x27;
 const uint8_t RFM9X_REG_PACKET_CONFIG_1 = 0x30;
 const uint8_t RFM9X_REG_IRQ_FLAGS = 0x3e;
@@ -50,7 +51,7 @@ void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate)
 
 /*
  * Bitrate (b/s) = FXOSC (32 MHz) / (Bitrate + BitrateFrac / 16)
- * e.g. 0x1A0B = 4.8 kb/s
+ * e.g. 0x1A0B = ~4.8 kb/s
 */
 void RFM9X_GetBitrate(const rfm9x_t* const rfm9x, uint32_t* const bitrate) {
   uint8_t com = RFM9X_READ | RFM9X_REG_BITRATE_MSB;
@@ -221,4 +222,28 @@ void RFM9X_SetFreqDev(const rfm9x_t* const rfm9x, const rfm9x_freq_dev_t* const 
   spi_tmp = tmp;
   rfm9x->spi_transfer(&spi_tmp);
   rfm9x->set_spi_nss_pin();
+void RFM9X_SetPower(const rfm9x_t* const rfm9x, const uint8_t* const outputPower) {
+  uint8_t com = RFM9X_WRITE | RFM9X_REG_PA_CONFIG;
+  uint8_t flagByte = 0x80;
+
+  if (*outputPower > 2) {
+    flagByte |= (*outputPower - 2) & 0x0f;
+  }
+
+  rfm9x->reset_spi_nss_pin();
+  rfm9x->spi_transfer(&com);
+  rfm9x->spi_transfer(&flagByte);
+  rfm9x->set_spi_nss_pin();
+}
+
+void RFM9X_GetPower(const rfm9x_t* const rfm9x, uint8_t* const outputPower) {
+  uint8_t com = RFM9X_READ | RFM9X_REG_PA_CONFIG;
+  uint8_t flagByte;
+
+  rfm9x->reset_spi_nss_pin();
+  rfm9x->spi_transfer(&com);
+  rfm9x->spi_transfer(&flagByte);
+  rfm9x->set_spi_nss_pin();
+
+  *outputPower = (flagByte & 0x0f) + 2;
 }
