@@ -222,6 +222,8 @@ void RFM9X_SetFreqDev(const rfm9x_t* const rfm9x, const rfm9x_freq_dev_t* const 
   spi_tmp = tmp;
   rfm9x->spi_transfer(&spi_tmp);
   rfm9x->set_spi_nss_pin();
+}
+
 void RFM9X_SetPower(const rfm9x_t* const rfm9x, const uint8_t* const outputPower) {
   uint8_t com = RFM9X_WRITE | RFM9X_REG_PA_CONFIG;
   uint8_t flagByte = 0x80;
