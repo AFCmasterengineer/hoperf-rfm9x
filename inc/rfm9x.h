@@ -59,6 +59,7 @@ void RFM9X_SetMode(const rfm9x_t* const rfm9x, const rfm9x_mode_t* const mode);
 void RFM9X_GetFlags(const rfm9x_t* const rfm9x, uint16_t* const flags);
 void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate);
 void RFM9X_GetBitrate(const rfm9x_t* const rfm9x, uint32_t* const bitrate);
+void RFM9X_WriteMessage(const rfm9x_t* const rfm9x, uint8_t* const data, uint8_t length);
 void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback);
 void RFM9X_SetCrcAutoClearMode(const rfm9x_t* const rfm9x, const rfm9x_crc_autoclear_mode_t* const mode);
 void RFM9X_SetFreqDev(const rfm9x_t* const rfm9x, const rfm9x_freq_dev_t* const freqDev);

@@ -17,6 +17,20 @@ const uint8_t RFM9X_REG_IRQ_FLAGS = 0x3e;
 const uint8_t RFM9X_REG_VERSION = 0x42;
 const uint8_t RFM9X_REG_BITRATE_FRAC = 0x5d; // bits 0-3; 4-7 are reserved
 
+void RFM9X_WriteMessage(const rfm9x_t* const rfm9x, uint8_t* const data, uint8_t length) {
+  uint8_t com = RFM9X_WRITE | RFM9X_REG_FIFO;
+  uint8_t lByte = length;
+  rfm9x->reset_spi_nss_pin();
+  rfm9x->spi_transfer(&com);
+  rfm9x->spi_transfer(&lByte);
+
+  for (uint8_t cntr = 0; cntr < length; cntr++) {
+    rfm9x->spi_transfer(data + cntr);
+  }
+
+  rfm9x->set_spi_nss_pin();
+}
+
 void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback) {
   uint8_t com = RFM9X_READ | RFM9X_REG_FIFO;
   uint8_t length = 0;
