@@ -197,7 +197,7 @@ void RFM9X_GetFlags(const rfm9x_t* const rfm9x, uint16_t* const flags) {
   rfm9x->reset_spi_nss_pin();
   rfm9x->spi_transfer(&com);
   rfm9x->spi_transfer(&flagByte);
-  *flags += flagByte << 8;
+  *flags += ((uint16_t)flagByte << 8);
   rfm9x->spi_transfer(&flagByte);
   *flags += flagByte;
   rfm9x->set_spi_nss_pin();
