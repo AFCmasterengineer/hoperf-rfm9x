@@ -65,4 +65,5 @@ void RFM9X_SetCrcAutoClearMode(const rfm9x_t* const rfm9x, const rfm9x_crc_autoc
 void RFM9X_SetFreqDev(const rfm9x_t* const rfm9x, const rfm9x_freq_dev_t* const freqDev);
 void RFM9X_SetPower(const rfm9x_t* const rfm9x, const uint8_t* const outputPower);
 void RFM9X_GetPower(const rfm9x_t* const rfm9x, uint8_t* const outputPower);
+void RFM9X_GetRSSIValue(const rfm9x_t* const rfm9x, uint8_t* const rssiValue);
 #endif

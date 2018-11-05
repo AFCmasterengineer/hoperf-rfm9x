@@ -11,6 +11,7 @@ const uint8_t RFM9X_REG_FDEV_MSB = 0x04;
 const uint8_t RFM9X_REG_FDEV_LSB = 0x05;
 const uint8_t RFM9X_REG_FREQUENCY = 0x06;
 const uint8_t RFM9X_REG_PA_CONFIG = 0x09;
+const uint8_t RFM9X_REG_RSSI_VALUE = 0x11;
 const uint8_t RFM9X_REG_SYNC_CONFIG = 0x27;
 const uint8_t RFM9X_REG_PACKET_CONFIG_1 = 0x30;
 const uint8_t RFM9X_REG_IRQ_FLAGS = 0x3e;
@@ -262,4 +263,13 @@ void RFM9X_GetPower(const rfm9x_t* const rfm9x, uint8_t* const outputPower) {
   rfm9x->set_spi_nss_pin();
 
   *outputPower = (flagByte & 0x0f) + 2;
+}
+
+void RFM9X_GetRSSIValue(const rfm9x_t* const rfm9x, uint8_t* const rssiValue) {
+  uint8_t com = RFM9X_READ | RFM9X_REG_RSSI_VALUE;
+
+  rfm9x->reset_spi_nss_pin();
+  rfm9x->spi_transfer(&com);
+  rfm9x->spi_transfer(rssiValue);
+  rfm9x->set_spi_nss_pin();
 }
