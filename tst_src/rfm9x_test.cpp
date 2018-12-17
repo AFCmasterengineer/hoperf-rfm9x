@@ -9,9 +9,10 @@ TEST(Rfm9xTest, Init) {
 
   RFM9X_Init(&rfm9x);
 
-  ASSERT_EQ(resp.size(), 2);
-  ASSERT_EQ(resp[0], "set reset pin");
-  ASSERT_EQ(resp[1], "delay: 15");
+  ASSERT_EQ(resp.size(), 3);
+  ASSERT_EQ(resp[0], "set spi nss pin");
+  ASSERT_EQ(resp[1], "set reset pin");
+  ASSERT_EQ(resp[2], "delay: 15");
 }
 
 TEST(Rfm9xTest, Reset) {
@@ -19,10 +20,12 @@ TEST(Rfm9xTest, Reset) {
 
   RFM9X_Reset(&rfm9x);
 
-  ASSERT_EQ(resp.size(), 3);
+  ASSERT_EQ(resp.size(), 5);
   ASSERT_EQ(resp[0], "reset reset pin");
   ASSERT_EQ(resp[1], "delay: 15");
-  ASSERT_EQ(resp[2], "set reset pin");
+  ASSERT_EQ(resp[2], "set spi nss pin");
+  ASSERT_EQ(resp[3], "set reset pin");
+  ASSERT_EQ(resp[4], "delay: 15");
 }
 
 TEST(Rfm9xTest, GetVersion) {
@@ -116,35 +119,43 @@ void Test_Setup() {
   };
 }
 
-void Rfm9xSetResetPin() {
+rfm9x_result_t Rfm9xSetResetPin() {
   ostringstream os;
 
   os << "set reset pin";
   resp.push_back(os.str());
+
+  return RFM9X_RESULT_OK;
 }
 
-void Rfm9xResetResetPin() {
+rfm9x_result_t Rfm9xResetResetPin() {
   ostringstream os;
 
   os << "reset reset pin";
   resp.push_back(os.str());
+
+  return RFM9X_RESULT_OK;
 }
 
-void Rfm9xSetSpiNssPin() {
+rfm9x_result_t Rfm9xSetSpiNssPin() {
   ostringstream os;
 
   os << "set spi nss pin";
   resp.push_back(os.str());
+
+  return RFM9X_RESULT_OK;
 }
 
-void Rfm9xResetSpiNssPin() {
+rfm9x_result_t Rfm9xResetSpiNssPin() {
   ostringstream os;
 
   os << "reset spi nss pin";
   resp.push_back(os.str());
+
+  return RFM9X_RESULT_OK;
 }
 
-void Rfm9xSpiTransfer(uint8_t* const data) {
+rfm9x_result_t Rfm9xSpiTransfer(uint8_t* const data) {
   ostringstream os;
 
   os << "spi transfer: " << (unsigned int)*data;
@@ -158,11 +169,15 @@ void Rfm9xSpiTransfer(uint8_t* const data) {
 
   *data = tmp;
   resp.push_back(os.str());
+
+  return RFM9X_RESULT_OK;
 }
 
-void Rfm9xDelay(uint8_t millisec) {
+rfm9x_result_t Rfm9xDelay(uint8_t millisec) {
   ostringstream os;
 
   os << "delay: " << (int)millisec;
   resp.push_back(os.str());
+
+  return RFM9X_RESULT_OK;
 }
